@@ -1,0 +1,93 @@
+name: version-tag
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  bump-version:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout merged branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Determine version bump
+        id: bump
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = context.payload.pull_request.labels.map(l => l.name)
+
+            let bump = 'patch'
+            if (labels.includes('version:major')) bump = 'major'
+            else if (labels.includes('version:minor')) bump = 'minor'
+            else if (labels.includes('version:patch')) bump = 'patch'
+
+            core.setOutput('bump', bump)
+
+      - name: Read current version
+        id: current
+        run: |
+          echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
+
+      - name: Calculate next version
+        id: next
+        run: |
+          CURRENT="${{ steps.current.outputs.version }}"
+          BUMP="${{ steps.bump.outputs.bump }}"
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+
+          if [ "$BUMP" = "major" ]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+          elif [ "$BUMP" = "minor" ]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+
+          NEXT="$MAJOR.$MINOR.$PATCH"
+          echo "version=$NEXT" >> $GITHUB_OUTPUT
+
+      - name: Update VERSION
+        run: |
+          echo "${{ steps.next.outputs.version }}" > VERSION
+
+      - name: Update package.json and package-lock.json
+        run: |
+          npm version ${{ steps.next.outputs.version }} --no-git-tag-version
+
+      - name: Commit version files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VERSION package.json package-lock.json
+          git commit -m "chore: bump version to v${{ steps.next.outputs.version }}" || echo "No changes to commit"
+          git push
+
+      - name: Create git tag
+        run: |
+          git tag v${{ steps.next.outputs.version }}
+          git push origin v${{ steps.next.outputs.version }}
