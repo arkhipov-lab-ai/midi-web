@@ -20,5 +20,7 @@ jobs:
             const hasLabel = labels.some(l => allowed.includes(l))
 
             if (!hasLabel) {
-              core.setFailed('PR must have a version label: version:patch | version:minor | version:major')
+              core.setFailed(
+                `PR must have one of labels: ${allowed.join(', ')}`
+              )
             }
