@@ -1,8 +1,10 @@
 name: version-tag
 
 on:
-  pull_request:
-    types: [closed]
+  workflow_run:
+    workflows: ["deploy"]
+    types:
+      - completed
     branches:
       - main
 
@@ -12,11 +14,13 @@ permissions:
 
 jobs:
   bump-version:
-    if: github.event.pull_request.merged == true
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout merged branch
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
           ref: main
@@ -24,18 +28,52 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24.14.0
           cache: npm
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Find PR associated with deployed commit
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commitSha = context.payload.workflow_run.head_sha
+
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: commitSha,
+            })
+
+            if (!prs || prs.length === 0) {
+              core.setFailed(`No pull request associated with commit ${commitSha}`)
+              return
+            }
+
+            // Prefer merged PRs into main
+            const pr =
+              prs.find(pr => pr.base.ref === 'main' && pr.merged_at) ||
+              prs.find(pr => pr.base.ref === 'main') ||
+              prs[0]
+
+            core.setOutput('number', String(pr.number))
 
       - name: Determine version bump
         id: bump
         uses: actions/github-script@v7
         with:
           script: |
-            const labels = context.payload.pull_request.labels.map(l => l.name)
+            const prNumber = Number('${{ steps.pr.outputs.number }}')
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            })
+
+            const labels = pr.labels.map(l => l.name)
 
             let bump = 'patch'
             if (labels.includes('version:major')) bump = 'major'
