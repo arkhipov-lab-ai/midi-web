@@ -1,0 +1,78 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+jobs:
+  deploy-dev:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: npm ci
+      - run: npm test -- --runInBand
+      - run: npm run build
+
+      - run: sudo apt-get update && sudo apt-get install -y rsync gettext-base
+
+      - run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+      - run: |
+          rsync -az --delete \
+          --exclude '.git' \
+          --exclude 'node_modules' \
+          --exclude 'dist' \
+          ./ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/midi-web/
+
+      - run: |
+          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "
+            cd /opt/midi-web
+            export DOMAIN=${{ vars.DOMAIN }}
+            envsubst '\$DOMAIN' < deploy/nginx/default.conf.template > deploy/nginx/default.conf
+            docker compose up -d --build web
+          "
+
+  deploy-prod:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: npm ci
+      - run: npm test -- --runInBand
+      - run: npm run build
+
+      - run: sudo apt-get update && sudo apt-get install -y rsync gettext-base
+
+      - run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+      - run: |
+          rsync -az --delete \
+          --exclude '.git' \
+          --exclude 'node_modules' \
+          --exclude 'dist' \
+          ./ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/midi-web/
+
+      - run: |
+          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "
+            cd /opt/midi-web
+            export DOMAIN=${{ vars.DOMAIN }}
+            envsubst '\$DOMAIN' < deploy/nginx/default.conf.template > deploy/nginx/default.conf
+            docker compose up -d --build web
+          "
