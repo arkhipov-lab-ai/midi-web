@@ -13,31 +13,53 @@ jobs:
     environment: development
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - run: npm ci
-      - run: npm test -- --runInBand
-      - run: npm run build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.0
+          cache: npm
 
-      - run: sudo apt-get update && sudo apt-get install -y rsync gettext-base
+      - name: Install dependencies
+        run: npm ci
 
-      - run: |
+      - name: Run tests
+        run: npm test -- --runInBand
+
+      - name: Build app
+        run: npm run build
+
+      - name: Install deploy tools
+        run: sudo apt-get update && sudo apt-get install -y rsync gettext-base
+
+      - name: Setup SSH
+        run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
 
-      - run: |
+      - name: Sync project to server
+        run: |
           rsync -az --delete \
-          --exclude '.git' \
-          --exclude 'node_modules' \
-          --exclude 'dist' \
-          ./ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/midi-web/
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'node_modules' \
+            --exclude 'dist' \
+            --exclude 'certbot' \
+            --exclude 'deploy/nginx/default.conf' \
+            ./ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/midi-web/"
 
-      - run: |
-          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "
+      - name: Deploy on server
+        run: |
+          ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" "
+            set -e
             cd /opt/midi-web
-            export DOMAIN=${{ vars.DOMAIN }}
+            export DOMAIN='${{ vars.DOMAIN }}'
+            mkdir -p deploy/nginx certbot/conf certbot/www
             envsubst '\$DOMAIN' < deploy/nginx/default.conf.template > deploy/nginx/default.conf
             docker compose up -d --build web
           "
@@ -48,31 +70,53 @@ jobs:
     environment: production
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - run: npm ci
-      - run: npm test -- --runInBand
-      - run: npm run build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.0
+          cache: npm
 
-      - run: sudo apt-get update && sudo apt-get install -y rsync gettext-base
+      - name: Install dependencies
+        run: npm ci
 
-      - run: |
+      - name: Run tests
+        run: npm test -- --runInBand
+
+      - name: Build app
+        run: npm run build
+
+      - name: Install deploy tools
+        run: sudo apt-get update && sudo apt-get install -y rsync gettext-base
+
+      - name: Setup SSH
+        run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
 
-      - run: |
+      - name: Sync project to server
+        run: |
           rsync -az --delete \
-          --exclude '.git' \
-          --exclude 'node_modules' \
-          --exclude 'dist' \
-          ./ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/midi-web/
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'node_modules' \
+            --exclude 'dist' \
+            --exclude 'certbot' \
+            --exclude 'deploy/nginx/default.conf' \
+            ./ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/midi-web/"
 
-      - run: |
-          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "
+      - name: Deploy on server
+        run: |
+          ssh "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" "
+            set -e
             cd /opt/midi-web
-            export DOMAIN=${{ vars.DOMAIN }}
+            export DOMAIN='${{ vars.DOMAIN }}'
+            mkdir -p deploy/nginx certbot/conf certbot/www
             envsubst '\$DOMAIN' < deploy/nginx/default.conf.template > deploy/nginx/default.conf
             docker compose up -d --build web
           "
