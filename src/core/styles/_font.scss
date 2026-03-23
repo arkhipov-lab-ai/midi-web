@@ -1,0 +1,82 @@
+:root {
+  --font-size-desktop: 16px;
+  --font-size-laptop: 15px;
+  --font-size-mobile: 14px;
+}
+
+:root {
+  --font-size-xs:    0.625rem;
+  --font-size-sm:    0.75rem;
+  --font-size-base:  0.875rem;
+  --font-size-md:    1rem;
+  --font-size-lg:    1.125rem;
+  --font-size-xl:    1.5rem;
+  --font-size-2xl:   2rem;
+}
+
+:root {
+  --fw-400: 400;
+  --fw-500: 500;
+  --fw-600: 600;
+  --fw-700: 700;
+}
+
+html {
+  font-size: var(--font-size-desktop);
+
+  * {
+    font-family: var(--font-involve);
+  }
+
+  @media (max-width: 768px) {
+    font-size: var(--font-size-laptop);
+  }
+
+  @media (max-width: 480px) {
+    font-size: var(--font-size-mobile);
+  }
+}
+
+.fw-400 {
+  font-weight: var(--fw-400);
+}
+
+.fw-500 {
+  font-weight: var(--fw-500);
+}
+
+.fw-600 {
+  font-weight: var(--fw-600);
+}
+
+.fw-700 {
+  font-weight: var(--fw-700);
+}
+
+.fs-xs {
+  font-size: var(--font-size-xs);
+}
+
+.fs-sm {
+  font-size: var(--font-size-sm);
+}
+
+.fs-base {
+  font-size: var(--font-size-base);
+}
+
+.fs-md {
+  font-size: var(--font-size-md);
+}
+
+.fs-lg {
+  font-size: var(--font-size-lg);
+}
+
+.fs-xl {
+  font-size: var(--font-size-xl);
+}
+
+.fs-2xl {
+  font-size: var(--font-size-2xl);
+}
