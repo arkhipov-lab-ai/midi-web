@@ -1,0 +1,1 @@
+export {emptyAsyncFunc} from './emptyAsyncFunc'
