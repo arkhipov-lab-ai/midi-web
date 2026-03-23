@@ -1,0 +1,48 @@
+@use 'sass:map';
+
+$cursors: () !default;
+$cursors: map.merge(
+                (
+                        "default":       default,
+                        "text":          text,
+                        "pointer":       pointer,
+                        "grabbing":      grabbing,
+                        "grab":          grab,
+                        "none":          none,
+                        "copy":          copy,
+                        "move":          move,
+                        "progress":      progress,
+                        "crosshair":     crosshair,
+                        "revert":        revert,
+                        "alias":         alias,
+                        "all-scroll":    all-scroll,
+                        "cell":          cell,
+                        "col-resize":    col-resize,
+                        "context-menu":  context-menu,
+                        "e-resize":      e-resize,
+                        "ew-resize":     ew-resize,
+                        "help":          help,
+                        "n-resize":      n-resize,
+                        "ne-resize":     ne-resize,
+                        "nesw-resize":   nesw-resize,
+                        "no-drop":       no-drop,
+                        "not-allowed":   not-allowed,
+                        "ns-resize":     ns-resize,
+                        "nw-resize":     nw-resize,
+                        "nwse-resize":   nwse-resize,
+                        "zoom-in":       zoom-in,
+                        "vertical-text": vertical-text,
+                        "wait":          wait,
+                        "zoom-out":      zoom-out,
+                        "s-resize":      s-resize,
+                        "sw-resize":     sw-resize,
+                        "se-resize":     se-resize
+                ),
+                $cursors
+);
+
+@each $cursor, $value in $cursors {
+  .cursor-#{$cursor} {
+    cursor: $value;
+  }
+}
