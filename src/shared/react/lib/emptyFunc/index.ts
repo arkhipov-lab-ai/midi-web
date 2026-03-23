@@ -1,0 +1,1 @@
+export {emptyFunc} from './emptyFunc'
