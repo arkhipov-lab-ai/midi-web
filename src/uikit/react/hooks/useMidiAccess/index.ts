@@ -1,0 +1,1 @@
+export {useMidiAccess} from './useMidiAccess'
