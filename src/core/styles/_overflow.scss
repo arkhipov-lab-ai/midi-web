@@ -1,0 +1,15 @@
+$overflow-values: (auto, hidden, visible, scroll, clip);
+
+@each $val in $overflow-values {
+  .overflow-#{$val} {
+    overflow: #{$val};
+  }
+}
+
+@each $axis in (x, y) {
+  @each $val in $overflow-values {
+    .overflow-#{$axis}-#{$val} {
+      overflow-#{$axis}: #{$val};
+    }
+  }
+}
