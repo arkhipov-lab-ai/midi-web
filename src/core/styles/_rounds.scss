@@ -1,0 +1,52 @@
+:root {
+  /* Radius ← spacing-scale */
+  --rd-3xs: var(--spacing-3xs); /* 0.0625rem */
+  --rd-2xs: var(--spacing-2xs); /* 0.125rem */
+  --rd-xs: var(--spacing-xs); /* 0.25rem  */
+  --rd-sm: var(--spacing-sm); /* 0.5rem   */
+  --rd-md: var(--spacing-md); /* 0.75rem  */
+  --rd-lg: var(--spacing-lg); /* 1rem     */
+  --rd-xl: var(--spacing-xl); /* 1.5rem   */
+  --rd-2xl: var(--spacing-2xl); /* 2rem     */
+  --rd-3xl: var(--spacing-3xl); /* 3.5rem   */
+  --rd-full: 9999px;
+}
+
+$radii-map: (
+        3xs : var(--rd-3xs),
+        2xs : var(--rd-2xs),
+        xs  : var(--rd-xs),
+        sm  : var(--rd-sm),
+        md  : var(--rd-md),
+        lg  : var(--rd-lg),
+        xl  : var(--rd-xl),
+        2xl : var(--rd-2xl),
+        3xl : var(--rd-3xl),
+        full: var(--rd-full)
+) !default;
+
+$corner-dirs: (
+        ""     : (),
+        tl     : (top-left),
+        tr     : (top-right),
+        br     : (bottom-right),
+        bl     : (bottom-left),
+        top    : (top-left top-right),
+        bottom : (bottom-left bottom-right),
+        left   : (top-left bottom-left),
+        right  : (top-right bottom-right)
+);
+
+@each $suffix, $value in $radii-map {
+  .rd-#{$suffix}           { border-radius: $value; }
+
+  @each $dir, $props in $corner-dirs {
+    @if $dir != "" {
+      .rd-#{$dir}-#{$suffix} {
+        @each $prop in $props {
+          border-#{$prop}-radius: $value;
+        }
+      }
+    }
+  }
+}
