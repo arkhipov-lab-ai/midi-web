@@ -7,6 +7,10 @@ on:
       - develop
       - '**/base'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -18,11 +22,77 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24.14.0
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test -- --runInBand
+      - name: Run tests with coverage
+        run: |
+          npm test -- --runInBand --coverage --coverageReporters=json-summary
+
+      - name: Read coverage summary
+        id: coverage
+        run: |
+          node <<'EOF'
+          const fs = require('fs')
+
+          const summary = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'))
+          const total = summary.total
+
+          const lines = total.lines.pct
+          const statements = total.statements.pct
+          const functions = total.functions.pct
+          const branches = total.branches.pct
+
+          const body = [
+            '## Unit test coverage',
+            '',
+            `- Lines: **${lines}%**`,
+            `- Statements: **${statements}%**`,
+            `- Functions: **${functions}%**`,
+            `- Branches: **${branches}%**`
+          ].join('\n')
+
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `body<<EOF\n${body}\nEOF\n`)
+          EOF
+
+      - name: Create or update PR comment
+        uses: actions/github-script@v7
+        env:
+          COMMENT_BODY: ${{ steps.coverage.outputs.body }}
+        with:
+          script: |
+            const body = process.env.COMMENT_BODY
+            const issue_number = context.payload.pull_request.number
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+            const marker = '## Unit test coverage'
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            })
+
+            const existing = comments.find(comment =>
+              comment.user.type === 'Bot' && comment.body.includes(marker)
+            )
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body,
+              })
+            }
