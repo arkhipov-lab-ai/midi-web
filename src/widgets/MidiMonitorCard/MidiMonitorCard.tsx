@@ -2,12 +2,19 @@ import React, {useCallback, useEffect, useRef, useState} from 'react'
 import {Alert, Button, Card, Tag, Typography} from 'antd'
 import {getMidiNoteName, MidiLogItem, ParsedMidiMessage} from '@shared/lib'
 import {useMidiInputListener, useMidiAccess} from '@uikit/react'
-import {MidiMessagesTable, MidiInputSelect} from '@features/ui'
+import {MidiMessagesTable, MidiInputSelect, MidiKeyboardPanel} from '@features/ui'
 import {FullWidthSpace} from './MidiMonitorCard.styles'
+import {useMidiPerformanceState} from '@entities/useMidiPerformanceState'
 
 const {Title, Text} = Typography
 
 export const MidiMonitorCard: React.FC = () => {
+
+    const {
+        activeNotes,
+        sustainPressed,
+        handleMidiMessage,
+    } = useMidiPerformanceState()
 
     const {
         isSupported,
@@ -43,6 +50,7 @@ export const MidiMonitorCard: React.FC = () => {
         midiAccess,
         selectedInputId,
         onMessage: handleMessage,
+        handleMidiMessage,
     })
 
     return (
@@ -99,6 +107,15 @@ export const MidiMonitorCard: React.FC = () => {
                         />
                     }
                 </FullWidthSpace>
+            </Card>
+
+            <Card
+                title='Keyboard'
+            >
+                <MidiKeyboardPanel
+                    activeNotes={activeNotes}
+                    sustainPressed={sustainPressed}
+                />
             </Card>
 
             <Card

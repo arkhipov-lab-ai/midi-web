@@ -5,6 +5,7 @@ interface UseMidiInputListenerParams {
     midiAccess: MIDIAccess | null
     selectedInputId?: string
     onMessage: (message: ParsedMidiMessage, input: MIDIInput) => void
+    handleMidiMessage: (message: ParsedMidiMessage) => void
 }
 
 export function useMidiInputListener(options: UseMidiInputListenerParams): void {
@@ -13,6 +14,7 @@ export function useMidiInputListener(options: UseMidiInputListenerParams): void 
         midiAccess,
         selectedInputId,
         onMessage,
+        handleMidiMessage,
     } = options
 
     useEffect(() => {
@@ -25,6 +27,7 @@ export function useMidiInputListener(options: UseMidiInputListenerParams): void 
         input.onmidimessage = (event) => {
             const parsed = parseMidiMessage(event.data as Uint8Array)
             onMessage(parsed, input)
+            handleMidiMessage(parsed)
         }
 
         return () => {

@@ -43,12 +43,14 @@ describe('useMidiInputListener', () => {
 
     it('does nothing if midiAccess is null', () => {
         const onMessage = jest.fn()
+        const handleMidiMessage = jest.fn()
 
         renderHook(() =>
             useMidiInputListener({
                 midiAccess: null,
                 selectedInputId: 'input-1',
                 onMessage,
+                handleMidiMessage,
             })
         )
 
@@ -57,12 +59,14 @@ describe('useMidiInputListener', () => {
 
     it('does nothing if selectedInputId is not provided', () => {
         const onMessage = jest.fn()
+        const handleMidiMessage = jest.fn()
 
         renderHook(() =>
             useMidiInputListener({
                 midiAccess: midiAccessMock,
                 selectedInputId: undefined,
                 onMessage,
+                handleMidiMessage,
             })
         )
 
@@ -71,6 +75,7 @@ describe('useMidiInputListener', () => {
 
     it('does nothing if input is not found', () => {
         const onMessage = jest.fn()
+        const handleMidiMessage = jest.fn()
 
         renderHook(() =>
             useMidiInputListener({
@@ -79,6 +84,7 @@ describe('useMidiInputListener', () => {
                 } as MIDIAccess,
                 selectedInputId: 'unknown',
                 onMessage,
+                handleMidiMessage,
             })
         )
 
@@ -87,12 +93,14 @@ describe('useMidiInputListener', () => {
 
     it('subscribes to MIDI input and handles messages', () => {
         const onMessage = jest.fn()
+        const handleMidiMessage = jest.fn()
 
         renderHook(() =>
             useMidiInputListener({
                 midiAccess: midiAccessMock,
                 selectedInputId: 'input-1',
                 onMessage,
+                handleMidiMessage,
             })
         )
 
@@ -111,16 +119,21 @@ describe('useMidiInputListener', () => {
             expect.objectContaining({type: 'noteon'}),
             inputMock
         )
+        expect(handleMidiMessage).toHaveBeenCalledWith(
+            expect.objectContaining({type: 'noteon'})
+        )
     })
 
     it('cleans up listener on unmount', () => {
         const onMessage = jest.fn()
+        const handleMidiMessage = jest.fn()
 
         const {unmount} = renderHook(() =>
             useMidiInputListener({
                 midiAccess: midiAccessMock,
                 selectedInputId: 'input-1',
                 onMessage,
+                handleMidiMessage,
             })
         )
 
@@ -133,6 +146,7 @@ describe('useMidiInputListener', () => {
 
     it('re-subscribes when selectedInputId changes', () => {
         const onMessage = jest.fn()
+        const handleMidiMessage = jest.fn()
 
         const secondInput: MIDIInput = {
             id: 'input-2',
@@ -148,6 +162,7 @@ describe('useMidiInputListener', () => {
                     midiAccess: midiAccessMock,
                     selectedInputId: 'input-1',
                     onMessage,
+                    handleMidiMessage,
                 },
             }
         )
@@ -158,6 +173,7 @@ describe('useMidiInputListener', () => {
             midiAccess: midiAccessMock,
             selectedInputId: 'input-2',
             onMessage,
+            handleMidiMessage,
         })
 
         expect(inputMock.onmidimessage).toBeNull()
