@@ -21,7 +21,7 @@ describe('AppLayout', () => {
         )
 
         expect(container.firstChild).toHaveStyle({
-            padding: '1.5rem',
+            padding: 'var(--pd-xl)',
             maxWidth: '75rem',
             margin: '0 auto',
         })
