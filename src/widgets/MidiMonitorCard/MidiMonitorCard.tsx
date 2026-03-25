@@ -4,7 +4,7 @@ import {getMidiNoteName, MidiLogItem, ParsedMidiMessage} from '@shared/lib'
 import {useMidiInputListener, useMidiAccess} from '@uikit/react'
 import {MidiMessagesTable, MidiInputSelect, MidiKeyboardPanel} from '@features/ui'
 import {FullWidthSpace} from './MidiMonitorCard.styles'
-import {useMidiPerformanceState} from '@entities/useMidiPerformanceState'
+import {useMidiEngine} from './lib'
 import {useHarmonyChordAnalysis} from '@entities/useHarmonyChordAnalysis'
 import {HarmonyChordPanel, HarmonyChordDebugPanel} from '@features/ui'
 
@@ -16,14 +16,15 @@ export const MidiMonitorCard: React.FC = () => {
         activeNotes,
         sustainPressed,
         handleMidiMessage,
-    } = useMidiPerformanceState()
+        resumeAudio,
+    } = useMidiEngine()
 
     const {
         isSupported,
         midiAccess,
         inputs,
         connect,
-    } = useMidiAccess()
+    } = useMidiAccess({onMidiConnect: resumeAudio, onRefreshMidiInputs: resumeAudio})
 
     const {
         chord,

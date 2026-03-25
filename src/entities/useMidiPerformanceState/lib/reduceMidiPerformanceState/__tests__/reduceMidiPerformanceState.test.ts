@@ -1,5 +1,9 @@
 import {reduceMidiPerformanceState} from '../reduceMidiPerformanceState'
-import {INITIAL_MIDI_PERFORMANCE_STATE, SUSTAIN_CONTROLLER, SUSTAIN_ON_THRESHOLD} from '../../constants'
+import {INITIAL_MIDI_PERFORMANCE_STATE} from '../../constants'
+import {
+    SUSTAIN_CONTROLLER,
+    SUSTAIN_ON_THRESHOLD,
+} from '@shared/lib'
 
 describe('reduceMidiPerformanceState', () => {
     it('adds note to pressedNotes on noteon', () => {

@@ -6,6 +6,11 @@ import {
     MidiInputDevice,
 } from '@shared/lib'
 
+interface UseMidiAccessOptions {
+    onMidiConnect?: (access: MIDIAccess) => Promise<void>
+    onRefreshMidiInputs?: (access: MIDIAccess) => Promise<void>
+}
+
 interface UseMidiAccessResult {
     isSupported: boolean
     midiAccess: MIDIAccess | null
@@ -13,26 +18,29 @@ interface UseMidiAccessResult {
     connect: () => Promise<void>
 }
 
-export function useMidiAccess(): UseMidiAccessResult {
+export function useMidiAccess(options?: UseMidiAccessOptions): UseMidiAccessResult {
+
     const [isSupported] = useState<boolean>(isWebMidiSupported)
     const [midiAccess, setMidiAccess] = useState<MIDIAccess | null>(null)
     const [inputs, setInputs] = useState<MidiInputDevice[]>([])
 
-    const refreshInputs = useCallback((access: MIDIAccess) => {
+    const refreshInputs = useCallback(async (access: MIDIAccess) => {
         setInputs(getMidiInputs(access))
-    }, [])
+        await options?.onRefreshMidiInputs?.(access)
+    }, [options])
 
     const connect = useCallback(async () => {
         const access = await requestMidiAccess()
+        await options?.onMidiConnect?.(access)
         setMidiAccess(access)
-        refreshInputs(access)
-    }, [refreshInputs])
+        await refreshInputs(access)
+    }, [refreshInputs, options])
 
     useEffect(() => {
         if (!midiAccess) return
 
-        const handleStateChange = () => {
-            refreshInputs(midiAccess)
+        const handleStateChange = async () => {
+            await refreshInputs(midiAccess)
         }
 
         midiAccess.onstatechange = handleStateChange
