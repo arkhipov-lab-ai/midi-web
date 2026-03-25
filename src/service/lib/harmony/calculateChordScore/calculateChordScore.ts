@@ -11,8 +11,10 @@ import {
     evaluateChordHeuristics,
 } from '@shared/lib'
 import {
+    getInputCoverageBonus,
     getSecondaryRootPenalty,
     getSimplicityBonus,
+    getUnderExplainingPenalty,
 } from './lib'
 
 interface CalculateChordScoreOptions {
@@ -202,10 +204,30 @@ export function calculateChordScore(options: CalculateChordScoreOptions) {
         missingSignature,
     })
 
+    const inputCoverageBonus = getInputCoverageBonus({
+        matched,
+        inputPitchClasses,
+        matchedSignature,
+        missingSignature,
+        category,
+    })
+
+    const underExplainingPenalty = getUnderExplainingPenalty({
+        inputPitchClasses,
+        matched,
+        extra,
+        category,
+        matchedSignature,
+        missingSignature,
+        matchedOptional,
+    })
+
     finalScore += rootOwnershipBonus
     finalScore -= slashPenalty
     finalScore += simplicityBonus
     finalScore -= secondaryRootPenalty
+    finalScore += inputCoverageBonus
+    finalScore -= underExplainingPenalty
 
     if (inputPitchClasses.length > templatePitchClasses.length + 2) {
         finalScore -= 4
@@ -226,6 +248,9 @@ export function calculateChordScore(options: CalculateChordScoreOptions) {
         rootOwnershipBonus,
         secondaryRootPenalty,
         simplicityBonus,
+        inputCoverageBonus,
+        underExplainingPenalty,
         finalScore,
     }
 }
+

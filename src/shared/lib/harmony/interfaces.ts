@@ -42,6 +42,8 @@ export interface ChordScoreBreakdown {
     rootOwnershipBonus: number
     secondaryRootPenalty: number
     simplicityBonus: number
+    inputCoverageBonus: number
+    underExplainingPenalty: number
     finalScore: number
 }
 

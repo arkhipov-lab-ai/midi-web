@@ -168,4 +168,63 @@ describe('detectChordWithDebug', () => {
         expect(result.selected?.symbol).toBe('C13')
         expect(result.candidates[0].symbol).toBe('C13')
     })
+
+    it('keeps C11 above same-root simpler explanations', () => {
+        const result = detectChordWithDebug({
+            36: 100,
+            40: 100,
+            43: 100,
+            46: 100,
+            50: 100,
+            53: 100,
+        })
+
+        expect(result.selected?.symbol).toBe('C11')
+
+        const c11Score = result.candidates.find((candidate) => candidate.symbol === 'C11')?.score ?? 0
+        const c9Score = result.candidates.find((candidate) => candidate.symbol === 'C9')?.score ?? 0
+        const c7Score = result.candidates.find((candidate) => candidate.symbol === 'C7')?.score ?? 0
+
+        expect(c11Score).toBeGreaterThan(c9Score)
+        expect(c11Score).toBeGreaterThan(c7Score)
+    })
+
+    it('keeps C13 above same-root simpler explanations', () => {
+        const result = detectChordWithDebug({
+            36: 100,
+            40: 100,
+            43: 100,
+            46: 100,
+            50: 100,
+            57: 100,
+        })
+
+        expect(result.selected?.symbol).toBe('C13')
+
+        const c13Score = result.candidates.find((candidate) => candidate.symbol === 'C13')?.score ?? 0
+        const c9Score = result.candidates.find((candidate) => candidate.symbol === 'C9')?.score ?? 0
+        const c6_9Score = result.candidates.find((candidate) => candidate.symbol === 'C6/9')?.score ?? 0
+
+        expect(c13Score).toBeGreaterThan(c9Score)
+        expect(c13Score).toBeGreaterThan(c6_9Score)
+    })
+
+    it('keeps C9 above same-root subset explanations', () => {
+        const result = detectChordWithDebug({
+            36: 100,
+            40: 100,
+            43: 100,
+            46: 100,
+            50: 100,
+        })
+
+        expect(result.selected?.symbol).toBe('C9')
+
+        const c9Score = result.candidates.find((candidate) => candidate.symbol === 'C9')?.score ?? 0
+        const c7Score = result.candidates.find((candidate) => candidate.symbol === 'C7')?.score ?? 0
+        const cAdd9Score = result.candidates.find((candidate) => candidate.symbol === 'Cadd9')?.score ?? 0
+
+        expect(c9Score).toBeGreaterThan(c7Score)
+        expect(c9Score).toBeGreaterThan(cAdd9Score)
+    })
 })
