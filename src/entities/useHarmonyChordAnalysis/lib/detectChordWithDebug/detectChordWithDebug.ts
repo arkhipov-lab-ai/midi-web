@@ -12,6 +12,9 @@ import {
     createChordSymbol,
     normalizeActiveNotes,
 } from '@service/lib'
+import {
+    getChordConfidence,
+} from './lib'
 import {ActiveNotesMap} from '@entities/useMidiPerformanceState'
 
 interface ChordCandidateInternal {
@@ -147,12 +150,14 @@ export function detectChordWithDebug(activeNotes: ActiveNotesMap): ChordAnalysis
 
     const best = candidates[0]
 
-    const confidenceBase = best.score / (best.score + 60)
+    const secondBestScore = candidates[1]?.score ?? 0
 
-    const confidence = Math.max(
-        0,
-        Math.min(1, confidenceBase * best.breakdown.incompleteConfidenceFactor),
-    )
+    const confidence = getChordConfidence({
+        bestScore: best.score,
+        secondScore: secondBestScore,
+        isSlashChord: best.isSlashChord,
+        incompleteConfidenceFactor: best.breakdown.incompleteConfidenceFactor,
+    })
 
     const selected: DetectedChordInfo = {
         root: getPitchClassName(best.rootPitchClass),
@@ -163,12 +168,8 @@ export function detectChordWithDebug(activeNotes: ActiveNotesMap): ChordAnalysis
             ? getPitchClassName(best.bassPitchClass)
             : null,
         isSlashChord: best.isSlashChord,
-        isOmissionLabel: best.symbol.includes('(no3)') || best.symbol.includes('(no5)'),
-        omissionType: best.symbol.includes('(no3)')
-            ? 'no3'
-            : best.symbol.includes('(no5)')
-                ? 'no5'
-                : null,
+        isOmissionLabel: best.isOmissionLabel,
+        omissionType: best.omissionType,
     }
 
     return {
