@@ -1,0 +1,1 @@
+export {getPowerChordPenalty} from './getPowerChordPenalty'

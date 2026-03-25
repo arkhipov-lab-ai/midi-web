@@ -1,0 +1,1 @@
+export {detectChord} from './detectChord'

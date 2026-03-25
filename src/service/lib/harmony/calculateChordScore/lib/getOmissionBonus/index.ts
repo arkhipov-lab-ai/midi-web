@@ -1,0 +1,1 @@
+export {getOmissionBonus} from './getOmissionBonus'

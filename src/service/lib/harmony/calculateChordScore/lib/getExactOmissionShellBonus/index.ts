@@ -1,0 +1,1 @@
+export {getExactOmissionShellBonus} from './getExactOmissionShellBonus'

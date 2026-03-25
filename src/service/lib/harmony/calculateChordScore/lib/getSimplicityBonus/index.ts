@@ -1,0 +1,1 @@
+export {getSimplicityBonus} from './getSimplicityBonus'

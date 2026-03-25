@@ -1,0 +1,1 @@
+export {getSecondaryRootPenalty} from './getSecondaryRootPenalty'

@@ -1,0 +1,1 @@
+export {countExtraPitchClasses} from './countExtraPitchClasses'

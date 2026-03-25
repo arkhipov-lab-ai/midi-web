@@ -1,0 +1,1 @@
+export {getOmissionPenalty} from './getOmissionPenalty'

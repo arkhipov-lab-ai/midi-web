@@ -1,0 +1,1 @@
+export {getInputCoverageBonus} from './getInputCoverageBonus'

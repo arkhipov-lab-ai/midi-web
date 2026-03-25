@@ -5,6 +5,8 @@ import {useMidiInputListener, useMidiAccess} from '@uikit/react'
 import {MidiMessagesTable, MidiInputSelect, MidiKeyboardPanel} from '@features/ui'
 import {FullWidthSpace} from './MidiMonitorCard.styles'
 import {useMidiPerformanceState} from '@entities/useMidiPerformanceState'
+import {useHarmonyChordAnalysis} from '@entities/useHarmonyChordAnalysis'
+import {HarmonyChordPanel, HarmonyChordDebugPanel} from '@features/ui'
 
 const {Title, Text} = Typography
 
@@ -22,6 +24,16 @@ export const MidiMonitorCard: React.FC = () => {
         inputs,
         connect,
     } = useMidiAccess()
+
+    const {
+        chord,
+        debug,
+        debugText,
+    } = useHarmonyChordAnalysis(activeNotes)
+
+    const handleCopyChordDebug = useCallback(async () => {
+        await navigator.clipboard.writeText(debugText)
+    }, [debugText])
 
     const [selectedInputId, setSelectedInputId] = useState<string>()
     const [logs, setLogs] = useState<MidiLogItem[]>([])
@@ -116,6 +128,24 @@ export const MidiMonitorCard: React.FC = () => {
                     activeNotes={activeNotes}
                     sustainPressed={sustainPressed}
                 />
+            </Card>
+
+            <Card title='Chord analysis'>
+                <FullWidthSpace
+                    orientation='vertical'
+                    size='middle'
+                >
+                    <HarmonyChordPanel
+                        chord={chord}
+                        debugText={debugText}
+                        onCopyDebug={handleCopyChordDebug}
+                    />
+
+                    <HarmonyChordDebugPanel
+                        debug={debug}
+                        debugText={debugText}
+                    />
+                </FullWidthSpace>
             </Card>
 
             <Card

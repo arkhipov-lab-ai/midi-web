@@ -1,0 +1,1 @@
+export {normalizeActiveNotes} from './normalizeActiveNotes'

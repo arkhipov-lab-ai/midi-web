@@ -1,0 +1,1 @@
+export {normalizePitchClasses} from './normalizePitchClasses'

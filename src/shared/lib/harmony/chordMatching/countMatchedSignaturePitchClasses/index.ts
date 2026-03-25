@@ -1,0 +1,1 @@
+export {countMatchedSignaturePitchClasses} from './countMatchedSignaturePitchClasses'
