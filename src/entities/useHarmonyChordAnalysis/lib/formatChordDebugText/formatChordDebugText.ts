@@ -38,6 +38,8 @@ export function formatChordDebugText(data: ChordAnalysisDebugData): string {
                 `simplicityBonus=${breakdown.simplicityBonus}`,
                 `inputCoverageBonus=${breakdown.inputCoverageBonus}`,
                 `underExplainingPenalty=${breakdown.underExplainingPenalty}`,
+                `missingThirdPenalty=${breakdown.missingThirdPenalty}`,
+                `incompleteVoicingBonus=${breakdown.incompleteVoicingBonus}`,
                 `final=${breakdown.finalScore}`,
             ].join(' | ')
         })

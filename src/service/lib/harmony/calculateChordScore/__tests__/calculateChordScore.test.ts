@@ -132,4 +132,46 @@ describe('calculateChordScore', () => {
 
         expect(denseSubset.underExplainingPenalty).toBeGreaterThan(0)
     })
+
+    it('penalizes quality-dependent chords when third is missing', () => {
+        const majorWithoutThird = calculateChordScore({
+            inputPitchClasses: [0, 7],
+            templatePitchClasses: [0, 4, 7],
+            requiredPitchClasses: [0, 4, 7],
+            optionalPitchClasses: [],
+            omittablePitchClasses: [],
+            signaturePitchClasses: [],
+            bassPitchClass: 0,
+            rootPitchClass: 0,
+            templatePriority: 10,
+            category: 'triad',
+            requiresSeventh: false,
+            isSlashChord: false,
+            templateIntervalCount: 3,
+            qualityDependsOnThird: true,
+            isIncompleteVoicingTemplate: false,
+        })
+
+        const powerChord = calculateChordScore({
+            inputPitchClasses: [0, 7],
+            templatePitchClasses: [0, 7],
+            requiredPitchClasses: [0, 7],
+            optionalPitchClasses: [],
+            omittablePitchClasses: [],
+            signaturePitchClasses: [],
+            bassPitchClass: 0,
+            rootPitchClass: 0,
+            templatePriority: 11,
+            category: 'triad',
+            requiresSeventh: false,
+            isSlashChord: false,
+            templateIntervalCount: 2,
+            qualityDependsOnThird: false,
+            isIncompleteVoicingTemplate: true,
+        })
+
+        expect(majorWithoutThird.missingThirdPenalty).toBeGreaterThan(0)
+        expect(powerChord.incompleteVoicingBonus).toBeGreaterThan(0)
+        expect(powerChord.finalScore).toBeGreaterThan(majorWithoutThird.finalScore)
+    })
 })

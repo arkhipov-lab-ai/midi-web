@@ -1,4 +1,6 @@
+export * from './getIncompleteVoicingBonus'
 export * from './getInputCoverageBonus'
+export * from './getMissingThirdPenalty'
 export * from './getSecondaryRootPenalty'
 export * from './getSimplicityBonus'
 export * from './getUnderExplainingPenalty'

@@ -16,6 +16,8 @@ export interface ChordTemplate {
     priority: number
     category?: 'triad' | 'seventh' | 'extended'
     requiresSeventh?: boolean
+    qualityDependsOnThird?: boolean
+    isIncompleteVoicingTemplate?: boolean
 }
 
 export interface DetectedChordInfo {
@@ -44,6 +46,8 @@ export interface ChordScoreBreakdown {
     simplicityBonus: number
     inputCoverageBonus: number
     underExplainingPenalty: number
+    missingThirdPenalty: number
+    incompleteVoicingBonus: number
     finalScore: number
 }
 

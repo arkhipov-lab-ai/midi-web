@@ -11,7 +11,9 @@ import {
     evaluateChordHeuristics,
 } from '@shared/lib'
 import {
+    getIncompleteVoicingBonus,
     getInputCoverageBonus,
+    getMissingThirdPenalty,
     getSecondaryRootPenalty,
     getSimplicityBonus,
     getUnderExplainingPenalty,
@@ -31,9 +33,12 @@ interface CalculateChordScoreOptions {
     requiresSeventh: boolean
     isSlashChord: boolean
     templateIntervalCount: number
+    qualityDependsOnThird: boolean
+    isIncompleteVoicingTemplate: boolean
 }
 
 export function calculateChordScore(options: CalculateChordScoreOptions) {
+
     const {
         inputPitchClasses,
         templatePitchClasses,
@@ -48,6 +53,8 @@ export function calculateChordScore(options: CalculateChordScoreOptions) {
         requiresSeventh,
         isSlashChord,
         templateIntervalCount,
+        qualityDependsOnThird,
+        isIncompleteVoicingTemplate,
     } = options
 
     const matched = countMatchedPitchClasses(inputPitchClasses, templatePitchClasses)
@@ -86,6 +93,19 @@ export function calculateChordScore(options: CalculateChordScoreOptions) {
         templatePitchClasses,
         bassPitchClass,
         category,
+    })
+
+    const missingThirdPenalty = getMissingThirdPenalty({
+        inputPitchClasses,
+        rootPitchClass,
+        qualityDependsOnThird,
+    })
+
+    const incompleteVoicingBonus = getIncompleteVoicingBonus({
+        inputPitchClasses,
+        matchedRequired,
+        requiredPitchClasses,
+        isIncompleteVoicingTemplate,
     })
 
     let finalScore = 0
@@ -233,6 +253,9 @@ export function calculateChordScore(options: CalculateChordScoreOptions) {
         finalScore -= 4
     }
 
+    finalScore -= missingThirdPenalty
+    finalScore += incompleteVoicingBonus
+
     return {
         matched,
         missing,
@@ -251,6 +274,8 @@ export function calculateChordScore(options: CalculateChordScoreOptions) {
         inputCoverageBonus,
         underExplainingPenalty,
         finalScore,
+        missingThirdPenalty,
+        incompleteVoicingBonus,
     }
 }
 

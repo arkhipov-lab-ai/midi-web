@@ -227,4 +227,43 @@ describe('detectChordWithDebug', () => {
         expect(c9Score).toBeGreaterThan(c7Score)
         expect(c9Score).toBeGreaterThan(cAdd9Score)
     })
+
+    it('detects power chord instead of major when third is missing', () => {
+        const result = detectChordWithDebug({
+            36: 100,
+            43: 100,
+            48: 100,
+        })
+
+        expect(result.selected?.symbol).toBe('C5')
+    })
+
+    it('detects D5 for root and fifth only', () => {
+        const result = detectChordWithDebug({
+            38: 100,
+            45: 100,
+        })
+
+        expect(result.selected?.symbol).toBe('D5')
+    })
+
+    it('keeps major chord when third is present', () => {
+        const result = detectChordWithDebug({
+            36: 100,
+            40: 100,
+            43: 100,
+        })
+
+        expect(result.selected?.symbol).toBe('C')
+    })
+
+    it('keeps minor chord when minor third is present', () => {
+        const result = detectChordWithDebug({
+            36: 100,
+            39: 100,
+            43: 100,
+        })
+
+        expect(result.selected?.symbol).toBe('Cm')
+    })
 })

@@ -24,6 +24,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: '',
         priority: 10,
         category: 'triad',
+        qualityDependsOnThird: true,
     },
     {
         type: 'minor',
@@ -33,6 +34,20 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'm',
         priority: 10,
         category: 'triad',
+        qualityDependsOnThird: true,
+    },
+    {
+        type: 'power',
+        intervals: [0, 7],
+        requiredIntervals: [0, 7],
+        optionalIntervals: [],
+        omittableIntervals: [],
+        signatureIntervals: [],
+        symbolSuffix: '5',
+        priority: 11,
+        category: 'triad',
+        qualityDependsOnThird: false,
+        isIncompleteVoicingTemplate: true,
     },
     {
         type: 'sus2',
@@ -42,6 +57,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'sus2',
         priority: 12,
         category: 'triad',
+        qualityDependsOnThird: false
     },
     {
         type: 'sus4',
@@ -51,6 +67,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'sus4',
         priority: 12,
         category: 'triad',
+        qualityDependsOnThird: false
     },
     {
         type: 'dominant7',
@@ -60,6 +77,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: '7',
         priority: 18,
         category: 'seventh',
+        qualityDependsOnThird: true,
     },
     {
         type: 'major7',
@@ -69,6 +87,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'maj7',
         priority: 18,
         category: 'seventh',
+        qualityDependsOnThird: true,
     },
     {
         type: 'minor7',
@@ -78,6 +97,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'm7',
         priority: 18,
         category: 'seventh',
+        qualityDependsOnThird: true,
     },
     {
         type: 'halfDiminished7',
@@ -87,6 +107,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'm7b5',
         priority: 21,
         category: 'seventh',
+        qualityDependsOnThird: true,
     },
     {
         type: 'diminished7',
@@ -96,6 +117,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'dim7',
         priority: 21,
         category: 'seventh',
+        qualityDependsOnThird: true,
     },
     {
         type: '6',
@@ -106,6 +128,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: '6',
         priority: 16,
         category: 'triad',
+        qualityDependsOnThird: true,
     },
     {
         type: 'minor6',
@@ -116,6 +139,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'm6',
         priority: 16,
         category: 'triad',
+        qualityDependsOnThird: true,
     },
     {
         type: 'add9',
@@ -126,6 +150,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'add9',
         priority: 15,
         category: 'triad',
+        qualityDependsOnThird: true,
     },
     {
         type: 'minorAdd9',
@@ -136,6 +161,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'madd9',
         priority: 15,
         category: 'triad',
+        qualityDependsOnThird: true,
     },
     {
         type: 'add11',
@@ -146,6 +172,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'add11',
         priority: 15,
         category: 'triad',
+        qualityDependsOnThird: true,
     },
     {
         type: 'minorAdd11',
@@ -156,6 +183,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: 'madd11',
         priority: 15,
         category: 'triad',
+        qualityDependsOnThird: true,
     },
     {
         type: '6/9',
@@ -166,6 +194,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: '6/9',
         priority: 22,
         category: 'extended',
+        qualityDependsOnThird: false
     },
     {
         type: '7sus4',
@@ -175,6 +204,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         symbolSuffix: '7sus4',
         priority: 19,
         category: 'seventh',
+        qualityDependsOnThird: false
     },
     {
         type: '9',
@@ -187,6 +217,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         priority: 24,
         category: 'extended',
         requiresSeventh: true,
+        qualityDependsOnThird: true,
     },
     {
         type: 'major9',
@@ -199,6 +230,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         priority: 24,
         category: 'extended',
         requiresSeventh: true,
+        qualityDependsOnThird: true,
     },
     {
         type: 'minor9',
@@ -211,6 +243,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         priority: 24,
         category: 'extended',
         requiresSeventh: true,
+        qualityDependsOnThird: true,
     },
     {
         type: '11',
@@ -247,6 +280,7 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         priority: 30,
         category: 'extended',
         requiresSeventh: true,
+        qualityDependsOnThird: true,
     },
     {
         type: 'major13',
@@ -259,5 +293,6 @@ export const CHORD_TEMPLATES: ChordTemplate[] = [
         priority: 30,
         category: 'extended',
         requiresSeventh: true,
+        qualityDependsOnThird: true,
     },
 ]

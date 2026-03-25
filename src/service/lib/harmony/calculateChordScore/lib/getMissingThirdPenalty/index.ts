@@ -1,0 +1,1 @@
+export {getMissingThirdPenalty} from './getMissingThirdPenalty'
