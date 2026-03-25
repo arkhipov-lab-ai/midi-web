@@ -1,9 +1,9 @@
 import {MidiPerformanceState} from '../../api'
-import {ParsedMidiMessage} from '@shared/lib'
 import {
+    ParsedMidiMessage,
     SUSTAIN_CONTROLLER,
     SUSTAIN_ON_THRESHOLD,
-} from '../constants'
+} from '@shared/lib'
 import {removeNote} from './lib'
 
 export function reduceMidiPerformanceState(state: MidiPerformanceState, message: ParsedMidiMessage): MidiPerformanceState {

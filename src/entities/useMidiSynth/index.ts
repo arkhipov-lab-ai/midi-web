@@ -1,0 +1,1 @@
+export {useMidiSynth} from './useMidiSynth'

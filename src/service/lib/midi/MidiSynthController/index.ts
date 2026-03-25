@@ -1,0 +1,1 @@
+export {MidiSynthController} from './MidiSynthController'

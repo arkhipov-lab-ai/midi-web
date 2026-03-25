@@ -1,0 +1,2 @@
+export const SUSTAIN_CONTROLLER = 64
+export const SUSTAIN_ON_THRESHOLD = 64
