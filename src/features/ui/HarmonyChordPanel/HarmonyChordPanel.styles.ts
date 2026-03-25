@@ -13,7 +13,7 @@ export const HarmonyChordResultRow = styled.div`
 
 export const HarmonyChordValue = styled(Typography.Title)`
     && {
-        margin: 0;
+        margin: 0 !important;
     }
 `
 

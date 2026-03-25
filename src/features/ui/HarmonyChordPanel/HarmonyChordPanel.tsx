@@ -43,7 +43,7 @@ export const HarmonyChordPanel: React.FC<HarmonyChordPanelProps> = (props) => {
             </HarmonyChordMeta>
 
             <HarmonyChordMeta type='secondary'>
-                Confidence: {chord?.confidence ?? '-'}
+                Confidence: {chord?.confidence?.toFixed(3) ?? '-'}
             </HarmonyChordMeta>
 
             <CopyDebugButton
