@@ -17,6 +17,7 @@ export const MidiMonitorCard: React.FC = () => {
         soundingNotes,
         sustainPressed,
         handleMidiMessage,
+        handlePerformanceEvent,
         resumeAudio,
     } = useMidiEngine()
 
@@ -59,6 +60,41 @@ export const MidiMonitorCard: React.FC = () => {
         }
         setLogs((prev) => [item, ...prev].slice(0, 100))
     }, [])
+
+    const handleVirtualNotePress = useCallback((midi: number) => {
+        void resumeAudio()
+        handlePerformanceEvent({
+            source: 'virtual-keyboard',
+            message: {
+                type: 'noteon',
+                channel: 1,
+                data1: midi,
+                data2: 100,
+                note: midi,
+                velocity: 100,
+                controller: null,
+                value: null,
+                raw: [],
+            },
+        })
+    }, [handlePerformanceEvent, resumeAudio])
+
+    const handleVirtualNoteRelease = useCallback((midi: number) => {
+        handlePerformanceEvent({
+            source: 'virtual-keyboard',
+            message: {
+                type: 'noteoff',
+                channel: 1,
+                data1: midi,
+                data2: 0,
+                note: midi,
+                velocity: 0,
+                controller: null,
+                value: null,
+                raw: [],
+            },
+        })
+    }, [handlePerformanceEvent])
 
     useMidiInputListener({
         midiAccess,
@@ -130,6 +166,8 @@ export const MidiMonitorCard: React.FC = () => {
                     pressedNotes={pressedNotes}
                     soundingNotes={soundingNotes}
                     sustainPressed={sustainPressed}
+                    onNotePress={handleVirtualNotePress}
+                    onNoteRelease={handleVirtualNoteRelease}
                 />
             </Card>
 

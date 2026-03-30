@@ -1,7 +1,11 @@
 import {useCallback} from 'react'
-import type {ParsedMidiMessage} from '@shared/lib'
+import type {
+    PerformanceInputEvent,
+    ParsedMidiMessage,
+} from '@shared/lib'
 import {useMidiPerformanceState} from '@entities/useMidiPerformanceState'
 import {useMidiSynth} from '@entities/useMidiSynth'
+import {useMidiRecorder} from '@entities/useMidiRecorder'
 
 export function useMidiEngine() {
 
@@ -18,15 +22,32 @@ export function useMidiEngine() {
         resumeAudio,
     } = useMidiSynth(true)
 
+    const {
+        handleMidiMessage: handleMidiMessageForRecorder,
+    } = useMidiRecorder()
+
+    const handlePerformanceEvent = useCallback((event: PerformanceInputEvent) => {
+        handleMidiMessageForState(event.message)
+        handleMidiMessageForAudio(event.message)
+        handleMidiMessageForRecorder(event.message, event.source)
+    }, [
+        handleMidiMessageForState,
+        handleMidiMessageForAudio,
+        handleMidiMessageForRecorder,
+    ])
+
     const handleMidiMessage = useCallback((message: ParsedMidiMessage) => {
-        handleMidiMessageForState(message)
-        handleMidiMessageForAudio(message)
-    }, [handleMidiMessageForState, handleMidiMessageForAudio])
+        handlePerformanceEvent({
+            source: 'midi',
+            message,
+        })
+    }, [handlePerformanceEvent])
 
     return {
         pressedNotes,
         soundingNotes,
         sustainPressed,
+        handlePerformanceEvent,
         handleMidiMessage,
         resumeAudio,
         // Same as soundingNotes

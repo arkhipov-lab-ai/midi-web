@@ -13,6 +13,8 @@ interface MidiKeyboardPanelProps {
     pressedNotes: ActiveNotesMap
     soundingNotes: ActiveNotesMap
     sustainPressed: boolean
+    onNotePress?: (midi: number) => void
+    onNoteRelease?: (midi: number) => void
 }
 
 export const MidiKeyboardPanel: React.FC<MidiKeyboardPanelProps> = (props) => {
@@ -21,6 +23,8 @@ export const MidiKeyboardPanel: React.FC<MidiKeyboardPanelProps> = (props) => {
         pressedNotes,
         soundingNotes,
         sustainPressed,
+        onNotePress,
+        onNoteRelease,
     } = props
 
     return (
@@ -29,6 +33,8 @@ export const MidiKeyboardPanel: React.FC<MidiKeyboardPanelProps> = (props) => {
                 <MidiKeyboard
                     pressedNotes={pressedNotes}
                     soundingNotes={soundingNotes}
+                    onNotePress={onNotePress}
+                    onNoteRelease={onNoteRelease}
                 />
             </MidiKeyboardMidiKeyboardContainer>
 
