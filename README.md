@@ -1,97 +1,3 @@
-# 🎹 MIDI Web
-
-A web application for working with MIDI input: recording, visualization, and future analysis (including AI-assisted features).
-
----
-
-## 🚀 Tech Stack
-
-- React + TypeScript
-- Vite
-- Jest + Testing Library
-- Node.js + npm
-
----
-
-## ⚙️ Requirements
-
-- Node.js: 24.14.0
-- npm: 11.9.0
-
-Check versions:
-
-```bash
-node -v
-npm -v
-```
-
----
-
-## 📦 Installation
-
-```bash
-npm install
-```
-
-or (recommended for clean installs / CI):
-
-```bash
-npm ci
-```
-
-
----
-
-## 🧑‍💻 Development
-
-Start dev server:
-
-```bash
-npm run dev
-```
-
----
-
-## 🏗️ Build
-
-```bash
-npm run build
-```
-
----
-
-## 🧪 Testing
-
-Run tests:
-
-```bash
-npm test
-```
-
-Run tests with coverage:
-
-```bash
-npm run coverage
-```
-
----
-
-## 🧱 Project Structure
-
-src/
-  app/
-  processes/
-  pages/
-  widgets/
-  features/
-  entities/
-  uikit/
-  service/
-  shared/
-  core/
-
----
-
 # 🔢 Versioning
 
 Project follows Semantic Versioning (SemVer):
@@ -197,7 +103,7 @@ chore: config / maintenance
 refactor: internal code changes  
 test: tests  
 build: build / CI  
-docs: documentation  
+docs: documentation
 
 Examples:
 
@@ -205,7 +111,7 @@ feat: add midi input listener
 fix: correct note-off handling  
 refactor: split midi service  
 test: add app render test  
-build: configure github actions  
+build: configure github actions
 
 ---
 

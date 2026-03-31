@@ -1,4 +1,4 @@
-name: deploy
+name: deploy | ui
 
 on:
   push:
@@ -21,14 +21,18 @@ jobs:
         with:
           node-version: 24.14.0
           cache: npm
+          cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
+        working-directory: web
         run: npm ci
 
       - name: Run tests
+        working-directory: web
         run: npm test -- --runInBand
 
       - name: Build app
+        working-directory: web
         run: npm run build
 
       - name: Install deploy tools
@@ -49,6 +53,7 @@ jobs:
             --exclude '.github' \
             --exclude 'node_modules' \
             --exclude 'dist' \
+            --exclude 'coverage' \
             --exclude 'certbot' \
             --exclude 'deploy/nginx/default.conf' \
             ./ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/midi-web/"
@@ -78,14 +83,18 @@ jobs:
         with:
           node-version: 24.14.0
           cache: npm
+          cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
+        working-directory: web
         run: npm ci
 
       - name: Run tests
+        working-directory: web
         run: npm test -- --runInBand
 
       - name: Build app
+        working-directory: web
         run: npm run build
 
       - name: Install deploy tools

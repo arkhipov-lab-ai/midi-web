@@ -1,6 +1,9 @@
 node_modules
 dist
 coverage
+web/node_modules
+web/dist
+web/coverage
 .git
 .github
 certbot
