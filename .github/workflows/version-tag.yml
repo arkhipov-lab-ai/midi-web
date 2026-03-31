@@ -1,8 +1,8 @@
-name: version-tag | ui
+name: version-tag
 
 on:
   workflow_run:
-    workflows: ["deploy | ui"]
+    workflows: ["deploy"]
     types:
       - completed
     branches:

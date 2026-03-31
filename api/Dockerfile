@@ -5,7 +5,7 @@ WORKDIR /app
 RUN pip install --no-cache-dir pipenv
 
 COPY api/Pipfile api/Pipfile.lock* ./
-RUN pipenv install --system --deploy --dev
+RUN pipenv install --system --deploy
 
 COPY api/ ./
 

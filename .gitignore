@@ -7,14 +7,19 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-web/node_modules
 node_modules
-web/dist
 dist
+coverage
+web/node_modules
+web/dist
+web/coverage
+
+api/__pycache__
+api/.pytest_cache
+api/.venv
+
 dist-ssr
 *.local
-web/coverage
-coverage
 
 # Editor directories and files
 .vscode/*
