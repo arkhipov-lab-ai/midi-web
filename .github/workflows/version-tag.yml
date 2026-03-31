@@ -1,8 +1,8 @@
-name: version-tag
+name: version-tag | ui
 
 on:
   workflow_run:
-    workflows: ["deploy"]
+    workflows: ["deploy | ui"]
     types:
       - completed
     branches:
@@ -30,8 +30,10 @@ jobs:
         with:
           node-version: 24.14.0
           cache: npm
+          cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
+        working-directory: web
         run: npm ci
 
       - name: Find PR associated with deployed commit
@@ -114,6 +116,7 @@ jobs:
           echo "${{ steps.next.outputs.version }}" > VERSION
 
       - name: Update package.json and package-lock.json
+        working-directory: web
         run: |
           npm version ${{ steps.next.outputs.version }} --no-git-tag-version
 
@@ -121,7 +124,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add VERSION package.json package-lock.json
+          git add VERSION web/package.json web/package-lock.json
           git commit -m "chore: bump version to v${{ steps.next.outputs.version }}" || echo "No changes to commit"
           git push
 

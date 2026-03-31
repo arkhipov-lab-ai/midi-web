@@ -2,10 +2,10 @@ FROM node:24.14.0-alpine AS build
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY web/package*.json ./
 RUN npm ci
 
-COPY . .
+COPY web/ ./
 RUN npm run build
 
 FROM nginx:alpine

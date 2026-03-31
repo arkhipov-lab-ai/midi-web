@@ -1,4 +1,4 @@
-name: tests
+name: tests | ui
 
 on:
   pull_request:
@@ -24,16 +24,20 @@ jobs:
         with:
           node-version: 24.14.0
           cache: npm
+          cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
+        working-directory: web
         run: npm ci
 
       - name: Run tests with coverage
+        working-directory: web
         run: |
           npm test -- --runInBand --coverage --coverageReporters=json-summary
 
       - name: Read coverage summary
         id: coverage
+        working-directory: web
         run: |
           node <<'EOF'
           const fs = require('fs')
