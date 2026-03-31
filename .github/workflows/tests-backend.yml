@@ -7,6 +7,10 @@ on:
       - develop
       - '**/base'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -27,6 +31,69 @@ jobs:
         working-directory: api
         run: pipenv install --dev
 
-      - name: Run backend tests
+      - name: Run backend tests with coverage
         working-directory: api
-        run: pipenv run pytest
+        run: pipenv run pytest --cov=app --cov-report=json
+
+      - name: Read backend coverage summary
+        id: coverage
+        working-directory: api
+        run: |
+          python <<'EOF'
+          import json
+          import os
+
+          with open('coverage.json', 'r', encoding='utf-8') as f:
+              summary = json.load(f)
+
+          total = summary["totals"]
+          lines = total["percent_covered_display"]
+
+          body = "\n".join([
+              "## BE test coverage",
+              "",
+              f"- Lines: **{lines}%**",
+          ])
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write(f"body<<EOF\n{body}\nEOF\n")
+          EOF
+
+      - name: Create or update PR comment
+        uses: actions/github-script@v7
+        env:
+          COMMENT_BODY: ${{ steps.coverage.outputs.body }}
+        with:
+          script: |
+            const body = process.env.COMMENT_BODY
+            const issue_number = context.payload.pull_request.number
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+            const marker = '## BE test coverage'
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            })
+
+            const existing = comments.find(comment =>
+              comment.user.type === 'Bot' && comment.body.includes(marker)
+            )
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body,
+              })
+            }

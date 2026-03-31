@@ -51,7 +51,7 @@ jobs:
           const branches = total.branches.pct
 
           const body = [
-            '## Unit test coverage',
+            '## UI test coverage',
             '',
             `- Lines: **${lines}%**`,
             `- Statements: **${statements}%**`,
@@ -72,7 +72,7 @@ jobs:
             const issue_number = context.payload.pull_request.number
             const owner = context.repo.owner
             const repo = context.repo.repo
-            const marker = '## Unit test coverage'
+            const marker = '## UI test coverage'
 
             const { data: comments } = await github.rest.issues.listComments({
               owner,
