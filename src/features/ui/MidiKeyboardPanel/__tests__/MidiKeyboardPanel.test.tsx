@@ -37,7 +37,8 @@ describe('MidiKeyboardPanel', () => {
     it('renders panel structure', () => {
         render(
             <MidiKeyboardPanel
-                activeNotes={{60: 100}}
+                pressedNotes={{60: 100}}
+                soundingNotes={{60: 100}}
                 sustainPressed={true}
             />
         )
@@ -48,22 +49,27 @@ describe('MidiKeyboardPanel', () => {
         expect(screen.getByTestId('sustain-pedal-indicator')).toBeInTheDocument()
     })
 
-    it('passes activeNotes to MidiKeyboard', () => {
-        const activeNotes = {
+    it('passes pressedNotes and soundingNotes to MidiKeyboard', () => {
+        const pressedNotes = {
+            60: 100,
+        }
+        const soundingNotes = {
             60: 100,
             64: 90,
         }
 
         render(
             <MidiKeyboardPanel
-                activeNotes={activeNotes}
+                pressedNotes={pressedNotes}
+                soundingNotes={soundingNotes}
                 sustainPressed={false}
             />
         )
 
         expect(mockMidiKeyboard).toHaveBeenCalledWith(
             expect.objectContaining({
-                activeNotes,
+                pressedNotes,
+                soundingNotes,
             })
         )
     })
@@ -71,7 +77,8 @@ describe('MidiKeyboardPanel', () => {
     it('passes sustainPressed to SustainPedalIndicator', () => {
         render(
             <MidiKeyboardPanel
-                activeNotes={{}}
+                pressedNotes={{}}
+                soundingNotes={{}}
                 sustainPressed={true}
             />
         )
@@ -83,17 +90,19 @@ describe('MidiKeyboardPanel', () => {
         )
     })
 
-    it('renders with empty activeNotes', () => {
+    it('renders with empty maps', () => {
         render(
             <MidiKeyboardPanel
-                activeNotes={{}}
+                pressedNotes={{}}
+                soundingNotes={{}}
                 sustainPressed={false}
             />
         )
 
         expect(mockMidiKeyboard).toHaveBeenCalledWith(
             expect.objectContaining({
-                activeNotes: {},
+                pressedNotes: {},
+                soundingNotes: {},
             })
         )
         expect(mockSustainPedalIndicator).toHaveBeenCalledWith(

@@ -1,6 +1,6 @@
 import {useCallback, useMemo, useReducer} from 'react'
 import {
-    getVisibleActiveNotes,
+    getSoundingNotes,
     INITIAL_MIDI_PERFORMANCE_STATE,
     reduceMidiPerformanceState,
 } from './lib'
@@ -17,11 +17,15 @@ export function useMidiPerformanceState() {
         dispatch(message)
     }, [])
 
-    const activeNotes = useMemo(() => getVisibleActiveNotes(state), [state])
+    const pressedNotes = state.pressedNotes
+    const soundingNotes = useMemo(() => getSoundingNotes(state), [state])
 
     return {
-        activeNotes,
+        pressedNotes,
+        soundingNotes,
         sustainPressed: state.sustainPressed,
         handleMidiMessage,
+        // Same as soundingNotes (legacy name from when “active” mixed concerns).
+        activeNotes: soundingNotes,
     }
 }

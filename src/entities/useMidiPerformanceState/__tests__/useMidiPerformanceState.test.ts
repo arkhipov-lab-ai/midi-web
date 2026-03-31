@@ -5,12 +5,14 @@ describe('useMidiPerformanceState', () => {
     it('returns initial state', () => {
         const {result} = renderHook(() => useMidiPerformanceState())
 
+        expect(result.current.pressedNotes).toEqual({})
+        expect(result.current.soundingNotes).toEqual({})
         expect(result.current.activeNotes).toEqual({})
         expect(result.current.sustainPressed).toBe(false)
         expect(typeof result.current.handleMidiMessage).toBe('function')
     })
 
-    it('adds note to activeNotes on noteon', () => {
+    it('adds note to pressedNotes and soundingNotes on noteon', () => {
         const {result} = renderHook(() => useMidiPerformanceState())
 
         act(() => {
@@ -27,11 +29,13 @@ describe('useMidiPerformanceState', () => {
             })
         })
 
+        expect(result.current.pressedNotes).toEqual({60: 100})
+        expect(result.current.soundingNotes).toEqual({60: 100})
         expect(result.current.activeNotes).toEqual({60: 100})
         expect(result.current.sustainPressed).toBe(false)
     })
 
-    it('removes note from activeNotes on noteoff when sustain is not pressed', () => {
+    it('removes note from pressed and sounding on noteoff when sustain is not pressed', () => {
         const {result} = renderHook(() => useMidiPerformanceState())
 
         act(() => {
@@ -62,11 +66,12 @@ describe('useMidiPerformanceState', () => {
             })
         })
 
-        expect(result.current.activeNotes).toEqual({})
+        expect(result.current.pressedNotes).toEqual({})
+        expect(result.current.soundingNotes).toEqual({})
         expect(result.current.sustainPressed).toBe(false)
     })
 
-    it('keeps note active after noteoff when sustain is pressed', () => {
+    it('moves note to sustained when noteoff while sustain is pressed (not in pressedNotes)', () => {
         const {result} = renderHook(() => useMidiPerformanceState())
 
         act(() => {
@@ -111,7 +116,8 @@ describe('useMidiPerformanceState', () => {
             })
         })
 
-        expect(result.current.activeNotes).toEqual({60: 100})
+        expect(result.current.pressedNotes).toEqual({})
+        expect(result.current.soundingNotes).toEqual({60: 100})
         expect(result.current.sustainPressed).toBe(true)
     })
 
@@ -174,7 +180,8 @@ describe('useMidiPerformanceState', () => {
             })
         })
 
-        expect(result.current.activeNotes).toEqual({})
+        expect(result.current.pressedNotes).toEqual({})
+        expect(result.current.soundingNotes).toEqual({})
         expect(result.current.sustainPressed).toBe(false)
     })
 
@@ -228,7 +235,8 @@ describe('useMidiPerformanceState', () => {
             })
         })
 
-        expect(result.current.activeNotes).toEqual({
+        expect(result.current.pressedNotes).toEqual({64: 110})
+        expect(result.current.soundingNotes).toEqual({
             60: 90,
             64: 110,
         })
@@ -252,7 +260,8 @@ describe('useMidiPerformanceState', () => {
             })
         })
 
-        expect(result.current.activeNotes).toEqual({})
+        expect(result.current.pressedNotes).toEqual({})
+        expect(result.current.soundingNotes).toEqual({})
         expect(result.current.sustainPressed).toBe(false)
     })
 })

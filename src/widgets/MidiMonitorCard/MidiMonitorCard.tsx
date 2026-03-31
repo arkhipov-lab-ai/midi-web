@@ -13,10 +13,20 @@ const {Title, Text} = Typography
 export const MidiMonitorCard: React.FC = () => {
 
     const {
-        activeNotes,
+        pressedNotes,
+        soundingNotes,
         sustainPressed,
         handleMidiMessage,
+        handlePerformanceEvent,
+        isRecording,
+        isPlaying,
+        hasRecording,
         resumeAudio,
+        startRecording,
+        stopRecording,
+        clearRecording,
+        playRecording,
+        stopPlayback,
     } = useMidiEngine()
 
     const {
@@ -30,7 +40,7 @@ export const MidiMonitorCard: React.FC = () => {
         chord,
         debug,
         debugText,
-    } = useHarmonyChordAnalysis(activeNotes)
+    } = useHarmonyChordAnalysis(soundingNotes)
 
     const handleCopyChordDebug = useCallback(async () => {
         await navigator.clipboard.writeText(debugText)
@@ -58,6 +68,41 @@ export const MidiMonitorCard: React.FC = () => {
         }
         setLogs((prev) => [item, ...prev].slice(0, 100))
     }, [])
+
+    const handleVirtualNotePress = useCallback((midi: number) => {
+        void resumeAudio()
+        handlePerformanceEvent({
+            source: 'virtual-keyboard',
+            message: {
+                type: 'noteon',
+                channel: 1,
+                data1: midi,
+                data2: 100,
+                note: midi,
+                velocity: 100,
+                controller: null,
+                value: null,
+                raw: [],
+            },
+        })
+    }, [handlePerformanceEvent, resumeAudio])
+
+    const handleVirtualNoteRelease = useCallback((midi: number) => {
+        handlePerformanceEvent({
+            source: 'virtual-keyboard',
+            message: {
+                type: 'noteoff',
+                channel: 1,
+                data1: midi,
+                data2: 0,
+                note: midi,
+                velocity: 0,
+                controller: null,
+                value: null,
+                raw: [],
+            },
+        })
+    }, [handlePerformanceEvent])
 
     useMidiInputListener({
         midiAccess,
@@ -126,9 +171,61 @@ export const MidiMonitorCard: React.FC = () => {
                 title='Keyboard'
             >
                 <MidiKeyboardPanel
-                    activeNotes={activeNotes}
+                    pressedNotes={pressedNotes}
+                    soundingNotes={soundingNotes}
                     sustainPressed={sustainPressed}
+                    onNotePress={handleVirtualNotePress}
+                    onNoteRelease={handleVirtualNoteRelease}
                 />
+
+                <div style={{marginTop: 12}}>
+                    <div style={{marginBottom: 8}}>
+                        <Text
+                            strong
+                        >
+                            status: {isPlaying ? 'playing' : isRecording ? 'recording' : 'idle'}
+                        </Text>
+                    </div>
+
+                    <div style={{display: 'flex', gap: 8}}>
+                    <Button
+                        type='primary'
+                        onClick={() => {
+                            startRecording()
+                        }}
+                        disabled={isRecording || isPlaying}
+                    >
+                        Record
+                    </Button>
+                    <Button
+                        type='primary'
+                        onClick={() => {
+                            void resumeAudio()
+                            playRecording()
+                        }}
+                        disabled={isRecording || isPlaying || !hasRecording}
+                    >
+                        Play
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            if (isRecording) stopRecording()
+                            if (isPlaying) stopPlayback()
+                        }}
+                        disabled={!isRecording && !isPlaying}
+                    >
+                        Stop
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            clearRecording()
+                        }}
+                        disabled={isRecording || isPlaying || !hasRecording}
+                    >
+                        Reset
+                    </Button>
+                    </div>
+                </div>
             </Card>
 
             <Card title='Chord analysis'>

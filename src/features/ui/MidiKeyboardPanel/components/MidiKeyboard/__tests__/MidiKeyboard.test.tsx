@@ -33,13 +33,18 @@ describe('MidiKeyboard', () => {
             totalHeight: 118,
         })
 
-        mockRenderKey.mockImplementation((key, velocity) => (
-            <g data-testid={`key-${key.midi}`} key={key.midi} data-velocity={velocity ?? ''} />
+        mockRenderKey.mockImplementation((key, pressed, sounding) => (
+            <g data-testid={`key-${key.midi}`} key={key.midi} data-pressed={pressed ?? ''} data-sounding={sounding ?? ''} />
         ))
     })
 
     it('renders keyboard svg with aria attributes and dimensions from layout', () => {
-        render(<MidiKeyboard activeNotes={{}} />)
+        render(
+            <MidiKeyboard
+                pressedNotes={{}}
+                soundingNotes={{}}
+            />
+        )
 
         const svg = screen.getByRole('img', {name: 'MIDI keyboard'})
 
@@ -49,7 +54,12 @@ describe('MidiKeyboard', () => {
     })
 
     it('calls createMidiKeyboardLayout with default props', () => {
-        render(<MidiKeyboard activeNotes={{}} />)
+        render(
+            <MidiKeyboard
+                pressedNotes={{}}
+                soundingNotes={{}}
+            />
+        )
 
         expect(mockCreateMidiKeyboardLayout).toHaveBeenCalledTimes(1)
         expect(mockCreateMidiKeyboardLayout).toHaveBeenCalledWith({
@@ -65,7 +75,8 @@ describe('MidiKeyboard', () => {
     it('calls createMidiKeyboardLayout with custom props', () => {
         render(
             <MidiKeyboard
-                activeNotes={{}}
+                pressedNotes={{}}
+                soundingNotes={{}}
                 startMidi={36}
                 endMidi={84}
                 whiteKeyWidth={20}
@@ -86,7 +97,12 @@ describe('MidiKeyboard', () => {
     })
 
     it('renders white and black keys using renderKey', () => {
-        render(<MidiKeyboard activeNotes={{}} />)
+        render(
+            <MidiKeyboard
+                pressedNotes={{}}
+                soundingNotes={{}}
+            />
+        )
 
         expect(mockRenderKey).toHaveBeenCalledTimes(3)
         expect(screen.getByTestId('key-60')).toBeInTheDocument()
@@ -94,10 +110,14 @@ describe('MidiKeyboard', () => {
         expect(screen.getByTestId('key-62')).toBeInTheDocument()
     })
 
-    it('passes active note velocities to renderKey', () => {
+    it('passes pressed and sounding velocities to renderKey', () => {
         render(
             <MidiKeyboard
-                activeNotes={{
+                pressedNotes={{
+                    60: 100,
+                    61: 64,
+                }}
+                soundingNotes={{
                     60: 100,
                     61: 64,
                 }}
@@ -107,22 +127,33 @@ describe('MidiKeyboard', () => {
         expect(mockRenderKey).toHaveBeenNthCalledWith(
             1,
             {midi: 60, kind: 'white', x: 0, width: 19, height: 118},
-            100
+            100,
+            100,
+            undefined
         )
         expect(mockRenderKey).toHaveBeenNthCalledWith(
             2,
             {midi: 62, kind: 'white', x: 19, width: 19, height: 118},
+            undefined,
+            undefined,
             undefined
         )
         expect(mockRenderKey).toHaveBeenNthCalledWith(
             3,
             {midi: 61, kind: 'black', x: 12.5, width: 13, height: 75},
-            64
+            64,
+            64,
+            undefined
         )
     })
 
     it('renders inside styled wrapper', () => {
-        render(<MidiKeyboard activeNotes={{}} />)
+        render(
+            <MidiKeyboard
+                pressedNotes={{}}
+                soundingNotes={{}}
+            />
+        )
 
         expect(screen.getByTestId('styled-midi-keyboard')).toBeInTheDocument()
     })

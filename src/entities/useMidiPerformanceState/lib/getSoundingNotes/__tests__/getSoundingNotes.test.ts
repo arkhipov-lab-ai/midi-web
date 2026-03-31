@@ -1,6 +1,6 @@
-import {getVisibleActiveNotes} from '../getVisibleActiveNotes'
+import {getSoundingNotes} from '../getSoundingNotes'
 
-describe('getVisibleActiveNotes', () => {
+describe('getSoundingNotes', () => {
     it('returns empty object when both maps are empty', () => {
         const state = {
             pressedNotes: {},
@@ -8,7 +8,7 @@ describe('getVisibleActiveNotes', () => {
             sustainPressed: false,
         }
 
-        const result = getVisibleActiveNotes(state)
+        const result = getSoundingNotes(state)
 
         expect(result).toEqual({})
     })
@@ -20,7 +20,7 @@ describe('getVisibleActiveNotes', () => {
             sustainPressed: false,
         }
 
-        const result = getVisibleActiveNotes(state)
+        const result = getSoundingNotes(state)
 
         expect(result).toEqual({60: 100, 64: 90})
     })
@@ -32,7 +32,7 @@ describe('getVisibleActiveNotes', () => {
             sustainPressed: true,
         }
 
-        const result = getVisibleActiveNotes(state)
+        const result = getSoundingNotes(state)
 
         expect(result).toEqual({60: 80, 67: 70})
     })
@@ -44,7 +44,7 @@ describe('getVisibleActiveNotes', () => {
             sustainPressed: true,
         }
 
-        const result = getVisibleActiveNotes(state)
+        const result = getSoundingNotes(state)
 
         expect(result).toEqual({
             60: 80,
@@ -61,7 +61,7 @@ describe('getVisibleActiveNotes', () => {
             sustainPressed: true,
         }
 
-        const result = getVisibleActiveNotes(state)
+        const result = getSoundingNotes(state)
 
         expect(result).toEqual({
             60: 120,
@@ -76,7 +76,7 @@ describe('getVisibleActiveNotes', () => {
             sustainPressed: false,
         }
 
-        const result = getVisibleActiveNotes(state)
+        const result = getSoundingNotes(state)
 
         expect(result).not.toBe(state.pressedNotes)
         expect(result).not.toBe(state.sustainedNotes)
@@ -89,7 +89,7 @@ describe('getVisibleActiveNotes', () => {
             sustainPressed: false,
         }
 
-        getVisibleActiveNotes(state)
+        getSoundingNotes(state)
 
         expect(state).toEqual({
             pressedNotes: {60: 100},

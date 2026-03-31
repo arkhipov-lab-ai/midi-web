@@ -28,7 +28,7 @@ describe('renderKey', () => {
 
     it('renders rect with correct attributes', () => {
         const {container} = render(
-            <svg>{renderKey(baseKey, undefined)}</svg>
+            <svg>{renderKey(baseKey, undefined, undefined)}</svg>
         )
 
         const rect = container.querySelector('rect')
@@ -39,16 +39,16 @@ describe('renderKey', () => {
         expect(rect).toHaveAttribute('fill', 'rgb(123, 123, 123)')
     })
 
-    it('does not render circle when velocity is undefined or 0', () => {
-        const {container: c1} = render(<svg>{renderKey(baseKey, undefined)}</svg>)
-        const {container: c2} = render(<svg>{renderKey(baseKey, 0)}</svg>)
+    it('does not render circle when pressed is undefined or 0', () => {
+        const {container: c1} = render(<svg>{renderKey(baseKey, undefined, 80)}</svg>)
+        const {container: c2} = render(<svg>{renderKey(baseKey, 0, 80)}</svg>)
 
         expect(c1.querySelector('circle')).toBeNull()
         expect(c2.querySelector('circle')).toBeNull()
     })
 
-    it('renders circle when velocity > 0 for white key', () => {
-        const {container} = render(<svg>{renderKey(baseKey, 50)}</svg>)
+    it('renders circle when pressed velocity > 0 for white key', () => {
+        const {container} = render(<svg>{renderKey(baseKey, 50, 50)}</svg>)
 
         const circle = container.querySelector('circle')
         expect(circle).toBeInTheDocument()
@@ -65,7 +65,7 @@ describe('renderKey', () => {
             height: 80,
         }
 
-        const {container} = render(<svg>{renderKey(blackKey, 50)}</svg>)
+        const {container} = render(<svg>{renderKey(blackKey, 50, 50)}</svg>)
 
         const circle = container.querySelector('circle')
         expect(circle).toBeInTheDocument()
@@ -73,10 +73,17 @@ describe('renderKey', () => {
         expect(circle).toHaveAttribute('r', '4')
     })
 
-    it('calls color helpers with correct arguments', () => {
-        render(<svg>{renderKey(baseKey, 70)}</svg>)
+    it('calls fill color with sounding velocity, marker with key kind', () => {
+        render(<svg>{renderKey(baseKey, 70, 70)}</svg>)
 
         expect(mockGetMidiKeyFillColor).toHaveBeenCalledWith('white', 70)
         expect(mockGetMidiKeyMarkerColor).toHaveBeenCalledWith('white')
+    })
+
+    it('uses sounding velocity for fill when sustain-only (pressed undefined)', () => {
+        render(<svg>{renderKey(baseKey, undefined, 70)}</svg>)
+
+        expect(mockGetMidiKeyFillColor).toHaveBeenCalledWith('white', 70)
+        expect(mockGetMidiKeyMarkerColor).not.toHaveBeenCalled()
     })
 })

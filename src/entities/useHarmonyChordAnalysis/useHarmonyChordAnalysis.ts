@@ -5,9 +5,9 @@ import {
 } from './lib'
 import {ActiveNotesMap} from '@entities/useMidiPerformanceState'
 
-export function useHarmonyChordAnalysis(activeNotes: ActiveNotesMap) {
+export function useHarmonyChordAnalysis(soundingNotes: ActiveNotesMap) {
     return useMemo(() => {
-        const debug = detectChordWithDebug(activeNotes)
+        const debug = detectChordWithDebug(soundingNotes)
         const debugText = formatChordDebugText(debug)
 
         return {
@@ -15,5 +15,5 @@ export function useHarmonyChordAnalysis(activeNotes: ActiveNotesMap) {
             debug,
             debugText,
         }
-    }, [activeNotes])
+    }, [soundingNotes])
 }
