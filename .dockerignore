@@ -4,6 +4,9 @@ coverage
 web/node_modules
 web/dist
 web/coverage
+api/__pycache__
+api/.pytest_cache
+api/.venv
 .git
 .github
 certbot

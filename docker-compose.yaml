@@ -1,12 +1,21 @@
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: web/Dockerfile
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      - api
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
 
   certbot:
     image: certbot/certbot
